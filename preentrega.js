@@ -67,14 +67,7 @@ let figurasDiv = document.getElementById("figuras")
         }
         arrayforeach(coleccion)
 
-    
-      
-      
-       
-
-
-
-//DARK MODE
+    //DARK MODE
 
         let botonDarkMode = document.getElementById("botonDarkMode")
         let botonLightMode = document.getElementById("botonLightMode")
