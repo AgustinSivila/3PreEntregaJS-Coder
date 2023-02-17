@@ -1,5 +1,3 @@
-//TERCERA PRE ENTREGA
-
 class Pelicula {
     constructor(personaje, precio, imagen, id, name) {
         this.personaje = personaje,
@@ -16,20 +14,22 @@ class Pelicula {
 
 
 
-const pelicula1 = new Pelicula("Luke", 3000, "assets/luke.jpg", 1, "Figura de Luke Skywalker")
+const pelicula1 = new Pelicula("Darth Maul", 3000, "assets/maul.jpg", 1, "Figura de Darth Maul")
 
-const pelicula2 = new Pelicula("Darth Vader", 5000, "assets/vader.jpg", 2, "Figura de Darth Vader")
+const pelicula2 = new Pelicula("General Grievous", 5000, "assets/grievous.jpg", 2, "Figura de General Grievous")
 
 const pelicula3 = new Pelicula("Yoda", 4500, "assets/yoda.jpg", 3, "Figura de Yoda")
 
-const pelicula4 = new Pelicula("Obi Wan Kenobi", 3500, "assets/kenobi.jpg", 4, "Figura de Obi Wan Kenobi")
+const pelicula4 = new Pelicula("Ahsoka Tano", 3500, "assets/ahsoka.jpg", 4, "Figura de Ahsoka Tano")
 
 const pelicula5 = new Pelicula("Han Solo", 2600, "assets/han.jpg", 5, "Figura de Han Solo")
 
 const pelicula6 = new Pelicula("Boba Fett", 6000, "assets/boba.jpg", 6, "Figura de Boba Fett")
 
+const pelicula7 = new Pelicula("Luke Skywalker", 6000, "assets/luke.jpg", 7, "Figura de Luke Skywalker")
 
-const coleccion = [pelicula1, pelicula2, pelicula3, pelicula4, pelicula5, pelicula6]
+
+const coleccion = [pelicula1, pelicula2, pelicula3, pelicula4, pelicula5, pelicula6, pelicula7]
 console.log(coleccion);
 
 
@@ -60,6 +60,14 @@ function arrayforeach(coleccion) {
         let carrito = document.getElementById(`carrito ${pelicula.id}`)
         console.log(carrito);
         carrito.addEventListener("click", () => {
+            
+                swal({
+                    title: "Tu figura ha sido agregada al carrito!",
+                    
+                    icon: "success",
+                    buttons: true,
+                    dangerMode: true,
+                  })
             console.log(`Tu figura ${pelicula.personaje} ha sido agregada al carrito`);
         })
 
@@ -67,6 +75,44 @@ function arrayforeach(coleccion) {
     })
 }
 arrayforeach(coleccion)
+
+const finalizar = document.getElementById(`carrito`)
+finalizar.addEventListener('click', () => { 
+    swal({
+        title: "Estas seguro que quieres finalizar la compra?",
+        
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          swal("Tu compra ah sido finalizada!", {
+            icon: "success",
+          });
+        } else {swal("Te llevaremos a la pagina inicial!");
+          
+        }
+
+})})
+
+ 
+
+function finalizarCompra() {
+    // Obtener las figuras del carrito
+    const figurasEnCarrito = JSON.parse(localStorage.getItem("figurasEnCarrito")) || [];
+  
+    // Calcular el precio total de las figuras
+    const precioTotal = figurasEnCarrito.reduce((total, figura) => total + figura.precio, 0);
+  
+    // Realizar la compra
+    console.log(`Se ha comprado un total de ${figurasEnCarrito.length} figuras por un precio total de ${precioTotal}`);
+  
+    // Vaciar el carrito
+    localStorage.setItem("figurasEnCarrito", "[]");
+    actualizarCarrito();
+  }
+  
 
 //DARK MODE
 
@@ -96,9 +142,61 @@ botonLightMode.addEventListener("click", () => {
     localStorage.setItem("modoOscuro", false)
 
 })
+// BUSQUEDA
 
-function encontrar(){
-    let search = document.getElementById("search").value
-    let arrayfiltrado = coleccion.filter(elem => elem.personaje.includes(search))
-    arrayforeach(arrayfiltrado)
-}
+function encontrar() {
+    let search = document.getElementById("search").value.toLowerCase(); 
+    let arrayfiltrado = coleccion.filter(elem => elem.personaje.toLowerCase().includes(search)); 
+    arrayforeach(arrayfiltrado);
+  }
+  
+
+   //API
+   const loadDataButton = document.getElementById('load-data');
+   const resultsContainer = document.getElementById('results');
+
+ 
+
+   loadDataButton.addEventListener('click', () => { 
+
+    swal({
+        title: "En esta seccion estan las proximas figuras que tendremos en stock, quieres ver?",
+        text: "Actualmente no contamos con las fotos de las proximas figuras",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          swal("Ahora te lo mostraremos!", {
+            icon: "success",
+          });
+        } else {swal("Te llevaremos a la pagina inicial!");
+          
+        }
+
+      });
+
+     fetch('https://swapi.dev/api/people/')
+       .then(response => response.json())
+       .then(data => {
+         let output = '';
+         console.log(data);
+
+         data.results.forEach(pelicula => {
+           output += `<div class="card-group">
+           <div class="card" ${pelicula.id}>
+           <img src= "assets/starwars.jpg"  class="img-fluid rounded-start"  width="250px" alt="...">
+           <div class="card-body">
+           <h5 class="card-title">${pelicula.name}</h5>
+           <p class="card-text">${pelicula.name}</p>
+           <p class="card-text"><small class="text-muted">Precio: ${pelicula.precio}</small></p>
+           <button id="carrito ${pelicula.id}" class="btn btn-outline-success">Agregar al carrito</button>
+           </div>`;
+         });
+
+         resultsContainer.innerHTML = output;
+       });
+   });
+   
+
