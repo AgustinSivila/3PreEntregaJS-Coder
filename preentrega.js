@@ -37,7 +37,7 @@ localStorage.setItem("coleccion", JSON.stringify(coleccion))
 
 
 // DOM
-
+let figurasEnCarrito = [];
 let figurasDiv = document.getElementById("figuras")
 
 function arrayforeach(coleccion) {
@@ -63,12 +63,14 @@ function arrayforeach(coleccion) {
             
                 swal({
                     title: "Tu figura ha sido agregada al carrito!",
-                    
                     icon: "success",
                     buttons: true,
                     dangerMode: true,
                   })
             console.log(`Tu figura ${pelicula.personaje} ha sido agregada al carrito`);
+            figurasEnCarrito.push(pelicula);
+            actualizarCarrito();
+            
         })
 
 
@@ -80,8 +82,7 @@ const finalizar = document.getElementById(`carrito`)
 finalizar.addEventListener('click', () => { 
     swal({
         title: "Estas seguro que quieres finalizar la compra?",
-        
-        icon: "warning",
+         icon: "warning",
         buttons: true,
         dangerMode: true,
       })
@@ -90,6 +91,7 @@ finalizar.addEventListener('click', () => {
           swal("Tu compra ah sido finalizada!", {
             icon: "success",
           });
+          actualizarCarrito();
         } else {swal("Te llevaremos a la pagina inicial!");
           
         }
@@ -98,21 +100,16 @@ finalizar.addEventListener('click', () => {
 
  
 
-function finalizarCompra() {
-    // Obtener las figuras del carrito
-    const figurasEnCarrito = JSON.parse(localStorage.getItem("figurasEnCarrito")) || [];
-  
-    // Calcular el precio total de las figuras
-    const precioTotal = figurasEnCarrito.reduce((total, figura) => total + figura.precio, 0);
-  
-    // Realizar la compra
-    console.log(`Se ha comprado un total de ${figurasEnCarrito.length} figuras por un precio total de ${precioTotal}`);
-  
-    // Vaciar el carrito
-    localStorage.setItem("figurasEnCarrito", "[]");
-    actualizarCarrito();
-  }
-  
+function actualizarCarrito() {
+  // Calcular el precio total de las figuras en el carrito
+  let precioTotal = figurasEnCarrito.reduce((total, figura) => total + figura.precio, 0);
+  console.log(`Precio total de las figuras en el carrito: ${precioTotal}`);
+  let precioTotalElemento = document.getElementById("precio-total");
+  precioTotalElemento.textContent = `Precio total: $${precioTotal}`;
+}
+
+arrayforeach(coleccion);
+ 
 
 //DARK MODE
 
